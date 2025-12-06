@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Glenn Frozene — 100th Birthday Countdown</title>
+<style>
+  :root{
+    --bg:#0b2a2f;
+    --card:#f8f7f3;
+    --accent:#d62828; /* baseball stitch red */
+    --accent2:#ffd166; /* warm gold */
+    --score-bg:#041924;
+    --muted:#6b6f72;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+  body{
+    background:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.02), transparent 15%),
+      radial-gradient(circle at 90% 80%, rgba(255,255,255,0.02), transparent 15%),
+      linear-gradient(180deg,#072a2d 0%, var(--bg) 60%);
+    color:var(--card);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+  }
+
+  .container{
+    width:960px;
+    max-width:95%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    padding:28px;
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:22px;
+    align-items:center;
+  }
+
+  header{
+    grid-column: 1 / -1;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+  .logo{
+    width:96px;height:96px;flex:0 0 96px; position:relative;
+  }
+
+  /* baseball circle with stitches (CSS + SVG fallback lines) */
+  .baseball{
+    width:96px;height:96px;border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f1f1f1 25%, #e9e9e9 60%, #fff 100%);
+    border:4px solid rgba(0,0,0,0.08);
+    position:relative;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25), inset 0 -6px 10px rgba(0,0,0,0.06);
+  }
+  /* stitch arcs */
+  .stitch{
+    position:absolute; top:8px; bottom:8px; width:54px; left: -8px; right: auto;
+    margin:auto 0;
+  }
+  .stitch svg{ width:54px; height:80px; transform:rotate(0deg); }
+  .stitch.right{ left:auto; right:-8px; transform:scaleX(-1); }
+
+  h1{
+    font-size:1.6rem;
+    margin:0;
+    letter-spacing:0.6px;
+  }
+  .subtitle{ color:var(--muted); font-size:0.95rem; margin-top:6px; }
+
+  /* countdown card */
+  .countcard{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+  }
+  .days{
+    font-size:5.2rem;
+    line-height:1;
+    font-weight:700;
+    color:var(--accent2);
+    text-shadow: 0 6px 14px rgba(0,0,0,0.6);
+    margin:4px 0;
+  }
+  .label{ font-weight:600; color:var(--card); opacity:0.9; }
+
+  .detail{
+    font-size:0.95rem;
+    color:var(--card);
+    opacity:0.95;
+    text-align:center;
+  }
+  .smallmuted{ color:var(--muted); font-size:0.85rem; margin-top:6px; }
+
+  /* scoreboard */
+  .scoreboard{
+    background: linear-gradient(180deg, var(--score-bg), #062b34);
+    border-radius:12px;
+    padding:18px;
+    color:var(--card);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .score-top{ display:flex; gap:12px; align-items:center; justify-content:space-between;}
+  .team{
+    display:flex; gap:12px; align-items:center;
+  }
+  .team .mini-ball{
+    width:48px;height:48px;border-radius:50%; background:#fff; border:3px solid rgba(0,0,0,0.08); display:flex;align-items:center;justify-content:center;font-weight:700;color:#111;}
+  }
+  .scoreboard .btn{
+    background:var(--accent); border:none; padding:8px 12px; border-radius:10px; color:white; font-weight:600; cursor:pointer;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.25);
+  }
+
+  /* animated baseball across */
+  .field{
+    grid-column:1 / -1;
+    height:110px;
+    border-radius:10px;
+    background: linear-gradient(180deg,#073a2f 0%, #0b4840 100%);
+    display:flex; align-items:center; padding:18px; gap:18px; overflow:hidden;
+  }
+  .diamond{
+    width:110px; height:110px; background: linear-gradient(180deg,#f9f3e9,#f0e7d7);
+    border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    box-shadow: inset 0 -6px 12px rgba(0,0,0,0.06);
+  }
+  .bat{
+    width:160px; height:36px; border-radius:8px; background:linear-gradient(90deg,#c08b47,#6b3b1e); transform:rotate(-18deg);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+  }
+
+  .baseball-runner{
+    width:64px; height:64px; border-radius:50%; position:relative; background:#fff; border:5px solid rgba(0,0,0,0.08);
+    display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 18px rgba(0,0,0,0.45);
+    transform: translateX(-20%);
+    animation: pitch 4s linear infinite;
+  }
+  @keyframes pitch {
+    0%{ transform: translateX(-120%) scale(0.6) rotate(-15deg); opacity:0.0; }
+    10%{ opacity:1; transform: translateX(-10%) scale(1) rotate(0deg); }
+    60%{ transform: translateX(320%) scale(1.02) rotate(0deg); }
+    100%{ transform: translateX(520%) scale(0.8) rotate(15deg); opacity:0; }
+  }
+
+  footer{ grid-column:1 / -1; text-align:center; color:var(--muted); font-size:0.85rem; margin-top:6px; }
+
+  /* small responsive */
+  @media (max-width:860px){
+    .container{ grid-template-columns: 1fr; padding:18px; }
+    .field{ height:120px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="title">
+    <header>
+      <div class="logo" aria-hidden="true">
+        <div class="baseball" title="Baseball">
+          <div class="stitch" style="left:-8px">
+            <!-- left stitch path -->
+            <svg viewBox="0 0 54 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <path d="M40 6 C24 20, 24 60, 40 74" fill="none" stroke="#d62828" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 8"/>
+            </svg>
+          </div>
+          <div class="stitch right" style="right:-8px">
+            <svg viewBox="0 0 54 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <path d="M14 6 C30 20, 30 60, 14 74" fill="none" stroke="#d62828" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 8"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h1 id="title">Glenn Frozene — 100th Birthday</h1>
+        <div class="subtitle">Countdown to Feb 18, 2026 — Ballpark style 🎉⚾</div>
+      </div>
+      <div style="margin-left:auto; text-align:right;">
+        <div id="nowClock" aria-live="polite" style="font-weight:600; color:var(--accent2)"></div>
+        <div style="font-size:0.85rem; color:var(--muted)">Local time</div>
+      </div>
+    </header>
+
+    <!-- left: big counter -->
+    <section class="countcard" aria-labelledby="countLabel" role="region">
+      <div class="label" id="countLabel">Days until the big 1-0-0</div>
+      <div class="days" id="daysLeft" aria-live="polite">--</div>
+      <div class="detail" id="timeBreakdown" aria-live="polite">-- days • -- hours • -- minutes • -- seconds</div>
+      <div class="smallmuted">Target date: <strong>February 18, 2026</strong> (Glenn Frozene turns 100)</div>
+    </section>
+
+    <!-- right: scoreboard + actions -->
+    <aside class="scoreboard" role="complementary" aria-label="Scoreboard">
+      <div class="score-top">
+        <div class="team">
+          <div class="mini-ball" aria-hidden="true">GF</div>
+          <div>
+            <div style="font-weight:800; letter-spacing:0.6px">Glenn Frozene</div>
+            <div style="font-size:0.85rem; color:var(--muted)">Future Hall of Fame — 100th</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:0.9rem; color:var(--muted)">Days to go</div>
+          <div style="font-size:2.2rem; font-weight:800; color:var(--accent2)" id="scoreDays">--</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+        <div style="font-size:0.95rem; color:var(--card)">Bring the caps, cake, and a glove — countdown updates in real time.</div>
+        <button class="btn" id="celebrateBtn" aria-pressed="false">Celebrate mode</button>
+      </div>
+      <div style="font-size:0.85rem; color:var(--muted)">Tip: open this page on the big screen and let the baseball run!</div>
+    </aside>
+
+    <!-- animated field -->
+    <div class="field" aria-hidden="false">
+      <div class="diamond" title="Birthday Diamond">
+        <div style="text-align:center">
+          <div style="font-weight:800; color:#1b1b1b; font-size:0.9rem">100</div>
+          <div style="font-size:0.8rem; color:var(--muted)">Feb 18</div>
+        </div>
+      </div>
+
+      <div style="flex:1; position:relative; overflow:hidden; display:flex; align-items:center; gap:14px;">
+        <div class="bat" aria-hidden="true"></div>
+
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div class="baseball-runner" id="movingBall" aria-hidden="true">
+            <!-- stitches (simple) -->
+            <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+              <circle cx="22" cy="22" r="17" fill="#fff" stroke="rgba(0,0,0,0.06)" stroke-width="2"/>
+              <path d="M9 12 C16 18, 16 26, 9 32" stroke="#d62828" stroke-width="2" stroke-linecap="round" fill="none" />
+              <path d="M35 12 C28 18, 28 26, 35 32" stroke="#d62828" stroke-width="2" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+
+          <div style="color:var(--card); font-weight:700;">
+            <div style="font-size:1.1rem">Next pitch to the big 100</div>
+            <div style="font-size:0.9rem; color:var(--muted)">One in a century — let's make it a home run.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Page created for Glenn Frozene's milestone — Feb 18, 2026. If you want the date adjusted (different year/timezone) or a printable poster version, ask and I'll make it.
+    </footer>
+  </div>
+
+<script>
+  // Target date: Feb 18, 2026 at 00:00:00 local time
+  const target = new Date(2026, 1, 18, 0, 0, 0, 0); // month is 0-indexed (1 = February)
+  const daysLeftEl = document.getElementById('daysLeft');
+  const timeBreakdownEl = document.getElementById('timeBreakdown');
+  const nowClock = document.getElementById('nowClock');
+  const scoreDays = document.getElementById('scoreDays');
+  const celebrateBtn = document.getElementById('celebrateBtn');
+
+  function updateCountdown(){
+    const now = new Date();
+    const diff = target - now;
+    // compute days/hours/minutes/seconds
+    if(diff <= 0){
+      daysLeftEl.textContent = "0";
+      timeBreakdownEl.textContent = "Happy 100th Birthday, Glenn! 🎉";
+      scoreDays.textContent = "0";
+      // optional: change title
+      document.title = "Happy 100th, Glenn! 🎉";
+      return;
+    }
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / (60*60*24));
+    const hours = Math.floor((totalSeconds % (60*60*24)) / (60*60));
+    const minutes = Math.floor((totalSeconds % (60*60)) / 60);
+    const seconds = totalSeconds % 60;
+
+    daysLeftEl.textContent = String(days).padStart(1, '0');
+    timeBreakdownEl.textContent = `${days} days • ${String(hours).padStart(2,'0')} hours • ${String(minutes).padStart(2,'0')} minutes • ${String(seconds).padStart(2,'0')} seconds`;
+    scoreDays.textContent = days;
+    // show local clock
+    nowClock.textContent = now.toLocaleString([], {hour:'numeric', minute:'numeric', second:'numeric'});
+    // set document title to show days remaining
+    document.title = `${days} days until Glenn's 100th 🎉`;
+  }
+
+  // initial call and interval
+  updateCountdown();
+  const interval = setInterval(updateCountdown, 1000);
+
+  // celebrate button toggles a simple confetti effect (CSS-created)
+  let celebrating=false;
+  celebrateBtn.addEventListener('click', ()=>{
+    celebrating = !celebrating;
+    celebrateBtn.setAttribute('aria-pressed', String(celebrating));
+    celebrateBtn.textContent = celebrating ? 'Turn off confetti' : 'Celebrate mode';
+    if(celebrating) startConfetti(); else stopConfetti();
+  });
+
+  // simple confetti using dynamically added colored dots
+  let confettiTimer = null;
+  function startConfetti(){
+    if(confettiTimer) return;
+    confettiTimer = setInterval(()=>{
+      const c = document.createElement('div');
+      const size = Math.random()*10 + 6;
+      c.style.position = 'fixed';
+      c.style.left = Math.random() * 100 + '%';
+      c.style.top = '-10px';
+      c.style.width = c.style.height = size + 'px';
+      c.style.borderRadius = '50%';
+      c.style.zIndex = 9999;
+      const colors = ['#ffd166','#d62828','#f94144','#06d6a0','#118ab2'];
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.opacity = 0.95;
+      c.style.pointerEvents = 'none';
+      c.style.transform = 'translateY(0) rotate(0deg)';
+      c.style.transition = 'transform 2.8s linear, opacity 2.8s linear';
+      document.body.appendChild(c);
+      // force layout
+      void c.offsetWidth;
+      const destY = window.innerHeight + 60 + Math.random()*200;
+      const rotate = Math.random()*720 - 360;
+      c.style.transform = `translateY(${destY}px) rotate(${rotate}deg)`;
+      c.style.opacity = 0.9;
+      setTimeout(()=> {
+        c.style.opacity = 0;
+      }, 2400);
+      setTimeout(()=> {
+        if(c && c.parentNode) c.parentNode.removeChild(c);
+      }, 3000);
+    }, 120);
+  }
+  function stopConfetti(){ if(confettiTimer){ clearInterval(confettiTimer); confettiTimer = null; } }
+
+  // Accessibility: update aria-live regions when tab becomes visible
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden) updateCountdown();
+  });
+</script>
+</body>
+</html>
